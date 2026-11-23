@@ -1,0 +1,119 @@
+name: junta-vecinos
+
+x-common-env: &common-env
+  SECRET: ${SECRET:?Crear el archivo .env a partir de .env.example}
+  TZ: America/Santiago
+  JAVA_TOOL_OPTIONS: "-Xmx256m"
+
+x-db-env: &db-env
+  <<: *common-env
+  MYSQL_USER: ${MYSQL_USER:?}
+  MYSQL_PASSWORD: ${MYSQL_PASSWORD:?}
+
+x-healthcheck: &healthcheck
+  interval: 10s
+  timeout: 5s
+  retries: 12
+  start_period: 40s
+
+x-servicio: &servicio
+  restart: unless-stopped
+  depends_on:
+    mysql:
+      condition: service_healthy
+
+services:
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    environment:
+      TZ: America/Santiago
+      MYSQL_USER: ${MYSQL_USER:?}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  api-gateway:
+    build: ./api-gateway
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    environment:
+      <<: *common-env
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://localhost:9090/actuator/health"]
+    depends_on:
+      auth-service: { condition: service_healthy }
+      dependencia-service: { condition: service_healthy }
+      reserva-service: { condition: service_healthy }
+      movimiento-service: { condition: service_healthy }
+      comprobante-service: { condition: service_healthy }
+      notificacion-service: { condition: service_healthy }
+
+  dependencia-service:
+    <<: *servicio
+    build: ./dependencia-service
+    environment:
+      <<: *db-env
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://localhost:9091/actuator/health"]
+
+  reserva-service:
+    <<: *servicio
+    build: ./reserva-service
+    environment:
+      <<: *db-env
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://localhost:9092/actuator/health"]
+
+  movimiento-service:
+    <<: *servicio
+    build: ./movimiento-service
+    environment:
+      <<: *db-env
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://localhost:9093/actuator/health"]
+
+  auth-service:
+    <<: *servicio
+    build: ./auth-service
+    environment:
+      <<: *db-env
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-60}
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://localhost:9094/actuator/health"]
+
+  comprobante-service:
+    <<: *servicio
+    build: ./comprobante-service
+    environment:
+      <<: *db-env
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://localhost:9095/actuator/health"]
+
+  notificacion-service:
+    <<: *servicio
+    build: ./notificacion-service
+    environment:
+      <<: *db-env
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://localhost:9096/actuator/health"]
+
+volumes:
+  mysql-data:

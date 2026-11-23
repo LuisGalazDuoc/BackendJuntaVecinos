@@ -1,0 +1,51 @@
+server:
+  port: 9090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 3000
+            response-timeout: 20s
+
+          routes:
+            - id: auth-service
+              uri: http://auth-service:9094
+              predicates:
+                - Path=/auth/**,/usuarios,/usuarios/**
+            - id: dependencia-service
+              uri: http://dependencia-service:9091
+              predicates:
+                - Path=/dependencias,/dependencias/**
+            - id: reserva-service
+              uri: http://reserva-service:9092
+              predicates:
+                - Path=/reservas,/reservas/**
+            - id: movimiento-service
+              uri: http://movimiento-service:9093
+              predicates:
+                - Path=/movimientos,/movimientos/**,/categorias,/categorias/**
+            - id: comprobante-service
+              uri: http://comprobante-service:9095
+              predicates:
+                - Path=/comprobantes,/comprobantes/**
+              filters:
+                - name: RequestSize
+                  args:
+                    maxSize: 6MB
+            - id: notificacion-service
+              uri: http://notificacion-service:9096
+              predicates:
+                - Path=/notificaciones,/notificaciones/**
