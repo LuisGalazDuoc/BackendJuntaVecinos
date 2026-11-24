@@ -12,7 +12,7 @@ CREATE TABLE categoria_movimiento (
 );
 
 --changeset juntavecinos:2
---rreserva_vigente impide registrar dos pagos vigentes para la misma reserva
+--comment: reserva_vigente impide registrar dos pagos vigentes para la misma reserva
 CREATE TABLE movimiento (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     tipo VARCHAR(10) NOT NULL,
@@ -57,7 +57,7 @@ INSERT INTO categoria_movimiento (nombre, tipo, descripcion) VALUES
 ('Otro gasto', 'GASTO', 'Otros gastos');
 
 --changeset juntavecinos:6
---movimientos para demostracion
+--comment: movimientos para demostracion
 INSERT INTO movimiento (tipo, categoria_id, descripcion, monto, fecha, usuario_registro_id, estado, fecha_creacion) VALUES
 ('INGRESO', (SELECT id FROM categoria_movimiento WHERE nombre = 'Cuota vecinal'), 'Cuotas de demostración', 90000, '2026-10-05', 3, 'VIGENTE', NOW()),
 ('GASTO', (SELECT id FROM categoria_movimiento WHERE nombre = 'Luz'), 'Cuenta de luz de demostración', 35000, '2026-10-10', 3, 'VIGENTE', NOW()),

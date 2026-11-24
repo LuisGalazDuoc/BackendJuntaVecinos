@@ -29,7 +29,7 @@ INSERT INTO rol (codigo, nombre, descripcion) VALUES
 ('ADMIN', 'Administrador', 'Administra cuentas, dependencias y catalogos');
 
 --changeset juntavecinos:4
---cuentas de demostracion
+--comment: cuentas de demostracion
 INSERT INTO usuario (nombre, email, telefono, password, rol_id) VALUES
 ('Vecina Demo', 'vecino@zaror.test', '900000001', '8d9d3d9386c92465506325802627880ae7197514', (SELECT id FROM rol WHERE codigo = 'VECINO')),
 ('Directiva Demo', 'directiva@zaror.test', '900000002', '625573a637d9e5502f7aaca57347ac3b0a8fa4d6', (SELECT id FROM rol WHERE codigo = 'DIRECTIVA')),

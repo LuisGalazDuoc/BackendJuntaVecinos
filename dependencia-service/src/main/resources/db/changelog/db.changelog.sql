@@ -27,7 +27,7 @@ INSERT INTO dependencia (nombre, descripcion, ubicacion, capacidad) VALUES
 ('Patio techado', 'Espacio exterior techado', 'Patio', 120);
 
 --changeset juntavecinos:4
---informacion para demostracion
+--comment: informacion para demostracion
 INSERT INTO sede (id, nombre, direccion, descripcion, reglamento, instrucciones_pago) VALUES
 (1, 'Junta de Vecinos Zaror', 'Dirección de demostración 123',
  'Sede comunitaria con dependencias disponibles para actividades de los vecinos. Datos ficticios con fines académicos.',

@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
 --changeset juntavecinos:1
---Cada aviso va dirigido a un usuario o a todos los usuarios de un rol
+--comment: Cada aviso va dirigido a un usuario o a todos los usuarios de un rol
 CREATE TABLE notificacion (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     usuario_id BIGINT NULL,

@@ -35,7 +35,7 @@ CREATE TABLE reserva (
 );
 
 --changeset juntavecinos:3
---una fila por hora ocupada. La clave primaria impide reservas superpuestas.
+--comment: una fila por hora ocupada. La clave primaria impide reservas superpuestas.
 CREATE TABLE reserva_bloque (
     dependencia_id BIGINT NOT NULL,
     fecha DATE NOT NULL,
