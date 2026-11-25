@@ -5,7 +5,6 @@ import java.security.MessageDigest;
 
 import org.springframework.stereotype.Service;
 
-/** Mismo mecanismo de hash del proyecto Microservicios-Docker-Con-JWT. */
 @Service
 public class HashService {
 
